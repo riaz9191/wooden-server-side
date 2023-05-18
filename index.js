@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 5000;
@@ -43,6 +43,13 @@ async function run() {
             const result = await toyCollections.find({}).toArray();
             res.send(result)
             console.log(result)
+        })
+        app.get('/allToys/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await toyCollections.findOne(query)
+            console.log(result)
+            res.send(result)
         })
 
         // Send a ping to confirm a successful connection
