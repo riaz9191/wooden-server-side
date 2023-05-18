@@ -56,12 +56,13 @@ async function run() {
 
             res.send(result)
         })
-        // app.get('/allToys', async (req, res) => {
-        //     console.log(req.query)
-        //     const result = await toyCollections.find({}).toArray();
-        //     res.send(result)
+        app.delete('/allToys/:id', async (req, res) => {
+            const id =req.params.id
+            const query = {_id: new ObjectId(id)}
+            const result = await toyCollections.deleteOne(query);
+            res.send(result)
 
-        // })
+        })
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
