@@ -40,17 +40,28 @@ async function run() {
             res.send(result)
         })
         app.get('/allToys', async (req, res) => {
-            const result = await toyCollections.find({}).toArray();
+            console.log(req.query)
+            let query = {};
+            if (req.query?.sellerEmail) {
+                query = { sellerEmail: req.query.sellerEmail }
+            }
+            const result = await toyCollections.find(query).toArray();
             res.send(result)
-            console.log(result)
+
         })
         app.get('/allToys/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await toyCollections.findOne(query)
-            console.log(result)
+
             res.send(result)
         })
+        // app.get('/allToys', async (req, res) => {
+        //     console.log(req.query)
+        //     const result = await toyCollections.find({}).toArray();
+        //     res.send(result)
+
+        // })
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
