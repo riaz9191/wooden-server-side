@@ -29,6 +29,11 @@ async function run() {
         await client.connect();
         const toyCollections = client.db("toyMarket").collection('toys')
 
+        // Creating index on two fields
+        const indexKeys = { title: 1, category: 1 }; // Replace field1 and field2 with your actual field names
+        const indexOptions = { title: "nameCategory" }; // Replace index_name with the desired index name 
+        const result = await toyCollections.createIndex(indexKeys, indexOptions);
+        // console.log(result);
         //postToys
         app.post('/posttoys', async (req, res) => {
             const body = req.body;
@@ -56,6 +61,18 @@ async function run() {
 
             res.send(result)
         })
+        // get toy by search
+        app.get("/searchtoy/:text", async (req, res) => {
+            const searchToy = req.params.text;
+            const result = await toyCollections.find({
+                $or: [
+                    { name: { $regex: searchToy, $options: "i" } },
+                    { category: { $regex: searchToy, $options: "i" } },
+                ],
+            }).toArray()
+            res.send(result)
+        })
+        
         app.put('/alltoys/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) };
@@ -74,7 +91,7 @@ async function run() {
                     description: updateToy.description,
                 },
             };
-            const result = await toyCollections.updateOne(filter,updateDoc,options)
+            const result = await toyCollections.updateOne(filter, updateDoc, options)
             res.send(result);
         })
 
