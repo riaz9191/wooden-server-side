@@ -45,15 +45,17 @@ async function run() {
             res.send(result)
         })
         app.get('/allToys', async (req, res) => {
-            console.log(req.query)
             let query = {};
             if (req.query?.sellerEmail) {
                 query = { sellerEmail: req.query.sellerEmail }
             }
-            const result = await toyCollections.find(query).toArray();
-            res.send(result)
-
-        })
+            let sort = {};
+            if (req.query?.sort) {
+                sort = { price: (req.query.sort === "asc" ? 1 : -1) } 
+            }
+            const result = await toyCollections.find(query).sort(sort).toArray();
+            res.send(result);
+        }); 
         app.get('/allToys/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
@@ -102,6 +104,28 @@ async function run() {
             res.send(result)
 
         })
+       
+        
+        // app.get('/testSellerSort', async (req, res) => {
+        //     const sellerEmail = req.query.sellerEmail;
+        //     const sort = req.query.sort === "asc" ? 1 : -1;
+        //     const query = { sellerEmail: sellerEmail }
+        //     const result = await toyCollections.find(query).sort({price: sort}).toArray();
+        //     res.send(result);
+        // });
+        
+        
+        // app.get('/testsort', async (req, res) => {
+        //     const sort = req.query.sort === "asc" ? 1 : -1;
+        //     const result = await toyCollections.find().sort({price: sort}).toArray();
+        //     res.send(result);
+        // });
+        
+        
+        
+        
+        
+        
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
